@@ -74,7 +74,7 @@ The complete trading strategy follows a sequential decision-making pipeline:
 ```mermaid
 flowchart LR
 
-    A["📊 BTC OHLCV Data"] 
+    A["📊 BTC OHLCV Data"]
     --> B["📐 Calculate<br/>14-Period ATR"]
 
     B --> C{"📈 Volume Spike?"}
@@ -116,21 +116,55 @@ flowchart LR
     O --> R
 
     R --> C
+```
 
-    classDef data fill:#1f2937,stroke:#60a5fa,stroke-width:2px,color:#fff
-    classDef calc fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#fff
-    classDef decision fill:#422006,stroke:#f59e0b,stroke-width:2px,color:#fff
-    classDef long fill:#052e16,stroke:#22c55e,stroke-width:2px,color:#fff
-    classDef short fill:#450a0a,stroke:#ef4444,stroke-width:2px,color:#fff
-    classDef manage fill:#172554,stroke:#3b82f6,stroke-width:2px,color:#fff
-    classDef exit fill:#3f3f46,stroke:#a1a1aa,stroke-width:2px,color:#fff
-    classDef hold fill:#27272a,stroke:#71717a,stroke-width:2px,color:#fff
+**Important:** the first line must be exactly:
 
-    class A data
-    class B calc
-    class C,D,J,K,L,M,P,Q decision
-    class E long
-    class F short
-    class G,I manage
-    class N,O,R exit
-    class H hold
+```text
+```mermaid
+```
+
+and after the final `R --> C` you need:
+
+```text
+```
+```
+
+### In your GitHub editor
+
+You should see this in **Edit** mode:
+
+```text
+## Strategy
+
+The complete trading strategy follows a sequential decision-making pipeline:
+
+```mermaid
+flowchart LR
+    A["📊 BTC OHLCV Data"] --> B["📐 Calculate<br/>14-Period ATR"]
+    ...
+    R --> C
+```
+```
+
+Then click **Preview**.
+
+You should **not** see `flowchart LR` as plain white text in Preview. GitHub should render it as an actual flowchart. GitHub officially supports Mermaid diagrams in Markdown files. :chatgpt-content-reference{index="1"}
+
+### One more thing
+
+Your screenshot shows:
+
+```text
+flowchart LR
+```
+
+with no visible:
+
+```text
+```mermaid
+```
+
+above it.
+
+**That's the entire problem.** Your Mermaid code itself isn't being recognized because the Markdown fence is missing.
