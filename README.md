@@ -67,37 +67,70 @@ The system processes historical BTC data, generates trading signals, passes thos
 
 ---
 
-# Strategy
+## Strategy
 
-The strategy can be summarized as:
-"
-             BTC OHLCV DATA
-                    |
-                    v
-          Calculate 14-period ATR
-                    |
-                    v
-          Detect Volume Spike
-                    |
-                    v
-          Check Candle Direction
-              /             \
-        Bullish              Bearish
-           |                    |
-           v                    v
-         LONG                 SHORT
-           |                    |
-           +---------+----------+
-                     |
-                     v
-             Manage Position
-                     |
-          +----------+----------+
-          |          |          |
-       ATR Stop   3 Bad      Reversal
-                  Candles
-          |          |          |
-          +----------+----------+
-                     |
-                     v
-                   EXIT "
+The complete trading strategy follows a sequential decision-making pipeline:
+
+```mermaid
+flowchart LR
+
+    A["📊 BTC OHLCV Data"] 
+    --> B["📐 Calculate<br/>14-Period ATR"]
+
+    B --> C{"📈 Volume Spike?"}
+
+    C -->|"No"| H["⏸️ HOLD"]
+    C -->|"Yes"| D{"🕯️ Candle Direction"}
+
+    D -->|"Bullish<br/>Close > Open"| E["🟢 LONG"]
+    D -->|"Bearish<br/>Close < Open"| F["🔴 SHORT"]
+
+    E --> G["⚙️ Manage LONG Position"]
+    F --> I["⚙️ Manage SHORT Position"]
+
+    G --> J{"🔄 Reversal?"}
+    I --> K{"🔄 Reversal?"}
+
+    J -->|"High Volume + Bearish"| F
+    K -->|"High Volume + Bullish"| E
+
+    G --> L{"🛡️ ATR Stop<br/>Triggered?"}
+    I --> M{"🛡️ ATR Stop<br/>Triggered?"}
+
+    L -->|"Yes"| N["🚪 EXIT LONG"]
+    M -->|"Yes"| O["🚪 EXIT SHORT"]
+
+    G --> P{"⚠️ 3 Consecutive<br/>Adverse Closes?"}
+    I --> Q{"⚠️ 3 Consecutive<br/>Adverse Closes?"}
+
+    P -->|"Yes"| N
+    Q -->|"Yes"| O
+
+    P -->|"No"| G
+    Q -->|"No"| I
+
+    L -->|"No"| G
+    M -->|"No"| I
+
+    N --> R["⚪ FLAT"]
+    O --> R
+
+    R --> C
+
+    classDef data fill:#1f2937,stroke:#60a5fa,stroke-width:2px,color:#fff
+    classDef calc fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#fff
+    classDef decision fill:#422006,stroke:#f59e0b,stroke-width:2px,color:#fff
+    classDef long fill:#052e16,stroke:#22c55e,stroke-width:2px,color:#fff
+    classDef short fill:#450a0a,stroke:#ef4444,stroke-width:2px,color:#fff
+    classDef manage fill:#172554,stroke:#3b82f6,stroke-width:2px,color:#fff
+    classDef exit fill:#3f3f46,stroke:#a1a1aa,stroke-width:2px,color:#fff
+    classDef hold fill:#27272a,stroke:#71717a,stroke-width:2px,color:#fff
+
+    class A data
+    class B calc
+    class C,D,J,K,L,M,P,Q decision
+    class E long
+    class F short
+    class G,I manage
+    class N,O,R exit
+    class H hold
